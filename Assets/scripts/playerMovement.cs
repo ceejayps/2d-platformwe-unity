@@ -55,6 +55,7 @@ private Rigidbody2D rb;
     {
         rb = GetComponent<Rigidbody2D>();
         dashTime = MaxDashTime;
+       
     }
 
     // Update is called once per frame
@@ -76,49 +77,52 @@ private Rigidbody2D rb;
 }
 
 void dash(){
-    // If the dash isn't currently active and the cooldown is over
-    if (dashTimer <= 0 && cooldownTimer <= 0)
-    {
-        // Get the input direction
-        float inputDirection = Input.GetAxisRaw("Horizontal");
-
-        // Set the dash direction to the player's facing direction
-        dashDirection = new Vector2(inputDirection, 0).normalized;
-
-        // If the dash key is pressed and there's an input direction
-        if (Input.GetKeyDown(dashKey) && dashDirection.magnitude > 0)
+        // If the dash isn't currently active and the cooldown is over
+        if (dashTimer <= 0 && cooldownTimer <= 0)
         {
-            // Start the dash
-            dashTimer = dashDuration;
-            cooldownTimer = dashCooldown;
+            // Get the input direction
+            float horizontal = Input.GetAxisRaw("Horizontal");
+            float vertical = Input.GetAxisRaw("Vertical");
+            if(vertical > 0){
 
-            // Disable the Rigidbody2D's gravity while dashing
-            rb.gravityScale = 0;
+            }else{
+            dashDirection = new Vector2(horizontal, vertical).normalized;
+            }
 
-            // Apply a force in the dash direction
-            rb.AddForce(dashDirection * dashSpeed, ForceMode2D.Impulse);
-        }
-    }
-    else
-    {
-        // If the dash is active, decrement the timer
-        if (dashTimer > 0)
-        {
-            dashTimer -= Time.deltaTime;
-
-            // If the dash timer is over, re-enable gravity
-            if (dashTimer <= 0)
+            // If the dash key is pressed and there's an input direction
+            if (Input.GetKeyDown(dashKey) && dashDirection.magnitude > 0)
             {
-                rb.gravityScale = 1;
+                // Start the dash
+                dashTimer = dashDuration;
+                cooldownTimer = dashCooldown;
+
+                // Disable the Rigidbody2D's gravity while dashing
+                rb.gravityScale = 0;
+
+                // Apply a force in the dash direction
+                rb.AddForce(dashDirection * dashSpeed, ForceMode2D.Impulse);
             }
         }
-
-        // If the cooldown is active, decrement the timer
-        if (cooldownTimer > 0)
+        else
         {
-            cooldownTimer -= Time.deltaTime;
+            // If the dash is active, decrement the timer
+            if (dashTimer > 0)
+            {
+                dashTimer -= Time.deltaTime;
+
+                // If the dash timer is over, re-enable gravity
+                if (dashTimer <= 0)
+                {
+                    rb.gravityScale = 1;
+                }
+            }
+
+            // If the cooldown is active, decrement the timer
+            if (cooldownTimer > 0)
+            {
+                cooldownTimer -= Time.deltaTime;
+            }
         }
-    }
 }
 
 
